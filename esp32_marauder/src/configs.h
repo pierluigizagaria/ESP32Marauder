@@ -8,8 +8,8 @@
   //#define MARAUDER_V4
   //#define MARAUDER_V6
   //#define MARAUDER_KIT
-  //#define GENERIC_ESP32
-  #define MARAUDER_FLIPPER
+  #define GENERIC_ESP32
+  //#define MARAUDER_FLIPPER
 
   #define MARAUDER_VERSION "v0.9.13"
 
@@ -352,6 +352,10 @@
 
   #ifdef MARAUDER_FLIPPER
     #define SD_CS 10
+  #endif
+
+  #ifdef GENERIC_ESP32
+    #define SD_CS 0
   #endif
   //// END SD DEFINITIONS
 

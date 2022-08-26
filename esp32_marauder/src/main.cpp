@@ -29,8 +29,7 @@ https://www.online-utility.org/image/convert/to/XBM
 #include "Buffer.h"
 #include "BatteryInterface.h"
 #include "TemperatureInterface.h"
-#include "LedInterface.h"
-#include "esp_interface.h"
+//#include "esp_interface.h"
 #include "settings.h"
 #include "CommandLine.h"
 #include "lang_var.h"
@@ -51,14 +50,19 @@ https://www.online-utility.org/image/convert/to/XBM
   SwitchLib c_btn = SwitchLib(C_BTN, 1000, true);
 #endif
 
+#if !defined(MARAUDER_FLIPPER) && !defined(GENERIC_ESP32)
+  #include "LedInterface.h"
+  LedInterface led_obj;
+  Adafruit_NeoPixel strip = Adafruit_NeoPixel(Pixels, PIN, NEO_GRB + NEO_KHZ800);
+#endif
+
 WiFiScan wifi_scan_obj;
 SDInterface sd_obj;
 Web web_obj;
 Buffer buffer_obj;
 BatteryInterface battery_obj;
 TemperatureInterface temp_obj;
-LedInterface led_obj;
-EspInterface esp_obj;
+//EspInterface esp_obj;
 Settings settings_obj;
 CommandLine cli_obj;
 flipperLED flipper_led;
@@ -70,8 +74,6 @@ flipperLED flipper_led;
 #endif
 
 const String PROGMEM version_number = MARAUDER_VERSION;
-
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(Pixels, PIN, NEO_GRB + NEO_KHZ800);
 
 uint32_t currentTime  = 0;
 
@@ -222,7 +224,7 @@ void setup()
   #endif
 
   // Temperature stuff
-  #ifndef MARAUDER_FLIPPER
+  #if !defined(MARAUDER_FLIPPER) && !defined(GENERIC_ESP32)
     temp_obj.RunSetup();
   #endif
 
@@ -230,7 +232,7 @@ void setup()
     display_obj.tft.println(F(text_table0[6]));
   #endif
 
-  #ifndef MARAUDER_FLIPPER
+  #if !defined(MARAUDER_FLIPPER) && !defined(GENERIC_ESP32)
     battery_obj.battery_level = battery_obj.getBatteryLevel();
   
 //    if (battery_obj.i2c_supported) {
@@ -241,7 +243,7 @@ void setup()
   #endif
 
   // Do some LED stuff
-  #ifndef MARAUDER_FLIPPER
+  #if !defined(MARAUDER_FLIPPER) && !defined(GENERIC_ESP32)
     led_obj.RunSetup();
   #endif
 
@@ -298,7 +300,7 @@ void loop()
     #endif
     wifi_scan_obj.main(currentTime);
     sd_obj.main();
-    #ifndef MARAUDER_FLIPPER
+    #if !defined(MARAUDER_FLIPPER) && !defined(GENERIC_ESP32)
       battery_obj.main(currentTime);
       temp_obj.main(currentTime);
     #endif
